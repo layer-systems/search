@@ -129,7 +129,7 @@ services:
       - xpack.security.transport.ssl.certificate_authorities=certs/ca/ca.crt
       - xpack.security.transport.ssl.verification_mode=certificate
       - xpack.license.self_generated.type=${LICENSE}
-    mem_limit: ${MEM_LIMIT}
+    mem_limit: ${MEM_LIMIT_SECONDARY}
     ulimits:
       memlock:
         soft: -1
@@ -168,7 +168,7 @@ services:
       - xpack.security.transport.ssl.certificate_authorities=certs/ca/ca.crt
       - xpack.security.transport.ssl.verification_mode=certificate
       - xpack.license.self_generated.type=${LICENSE}
-    mem_limit: ${MEM_LIMIT}
+    mem_limit: ${MEM_LIMIT_SECONDARY}
     ulimits:
       memlock:
         soft: -1
@@ -192,6 +192,11 @@ services:
       es03:
         condition: service_healthy
     image: docker.elastic.co/kibana/kibana:${STACK_VERSION}
+    # labels:
+    #   - "traefik.enable=true"
+    #   - "traefik.http.routers.search.rule=Host(`search.layer.systems`)"
+    #   - "traefik.http.routers.search.entrypoints=websecure"
+    #   - "traefik.http.routers.search.tls.certresolver=myresolver"
     volumes:
       - certs:/usr/share/kibana/config/certs
       - kibanadata:/usr/share/kibana/data
@@ -203,7 +208,7 @@ services:
       - ELASTICSEARCH_USERNAME=kibana_system
       - ELASTICSEARCH_PASSWORD=${KIBANA_PASSWORD}
       - ELASTICSEARCH_SSL_CERTIFICATEAUTHORITIES=config/certs/ca/ca.crt
-    mem_limit: ${MEM_LIMIT}
+    mem_limit: ${MEM_LIMIT_SECONDARY}
     healthcheck:
       test:
         [
@@ -223,6 +228,27 @@ services:
       - KINDS=[0,1]
     volumes:
       - certs:/app/certs/
+    mem_limit: ${MEM_LIMIT_SECONDARY}
+
+  # traefik:
+  #   image: "traefik:v2.10"
+  #   container_name: "traefik"
+  #   command:
+  #     #- "--log.level=DEBUG"
+  #     - "--api.insecure=true"
+  #     - "--providers.docker=true"
+  #     - "--providers.docker.exposedbydefault=false"
+  #     - "--entrypoints.websecure.address=:443"
+  #     - "--certificatesresolvers.myresolver.acme.tlschallenge=true"
+  #     #- "--certificatesresolvers.myresolver.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory"
+  #     - "--certificatesresolvers.myresolver.acme.email=mail@pascalrost.de"
+  #     - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
+  #   ports:
+  #     - "443:443"
+  #     - "8080:8080"
+  #   volumes:
+  #     - ./letsencrypt:/letsencrypt
+  #     - "/var/run/docker.sock:/var/run/docker.sock:ro"
 
 volumes:
   certs:
