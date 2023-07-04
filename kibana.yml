@@ -1,0 +1,22 @@
+server.name: kibana
+server.host: 0.0.0.0
+elasticsearch.hosts: [ https://es01:9200 ]
+
+elasticsearch.ssl.certificateAuthorities: [ "config/certs/ca/ca.crt" ]
+
+monitoring.ui.container.elasticsearch.enabled: true
+
+## X-Pack security credentials
+#
+elasticsearch.username: kibana_system
+elasticsearch.password: kibana
+
+
+xpack.security.authc.providers:
+  basic.basic1:
+    order: 0
+  anonymous.anonymous1:
+    order: 1
+    credentials:
+      username: "guest"
+      password: "guest"
