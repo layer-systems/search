@@ -3,6 +3,7 @@ import os
 import websockets
 import json
 from elasticsearch import Elasticsearch
+from datetime import datetime
 
 async def relay_websockets(inputWebsocket, kinds, es):
     while True:
@@ -15,7 +16,9 @@ async def relay_websockets(inputWebsocket, kinds, es):
                     del event[1]
                     print("Sending event " + str(event[1]['id']) + " (kind: "+str(event[1]['kind'])+") to elasticsearch")
                     # send event to elasticsearch
-                    resp = es.index(index="nostr", id=str(event[1]['id']), document=event[1])
+                    index_name = "nostr-" + datetime.today().strftime('%Y-%m-%d')
+                    event_timestamp = datetime.fromtimestamp(event[1]['created_at'])
+                    resp = es.index(index=index_name, id=str(event[1]['id']), document={**event[1], "@timestamp": event_timestamp})
                     if(resp['result'] != "created"):
                         print("Failed to send event to elasticsearch: "+str(resp))
                 elif(event[0] == "EOSE"):
