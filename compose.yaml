@@ -225,6 +225,8 @@ services:
     volumes:
       - certs:/app/certs/
     mem_limit: ${MEM_LIMIT_SECONDARY}
+    env_file:
+      - .env
 
 volumes:
   certs:
