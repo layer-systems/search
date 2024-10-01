@@ -6,6 +6,7 @@ Please configure .env file to your needs! Change the Elasticsearch Password for 
 
 # Run Docker Compose
 `docker compose build && docker compose up -d`
+
 Wait a few moments, then check http://your-ip:5601/
 
 # Contribute
